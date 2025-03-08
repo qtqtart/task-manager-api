@@ -1,14 +1,14 @@
 model TaskHistory {
   id       String            @id @default(uuid()) @map("id")
   userId   String            @map("user_id")
-  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   taskId   String            @map("task_id")
-  task     Task              @relation(fields: [taskId], references: [id], onDelete: Cascade)
   action   TaskHistoryAction @default(CREATE)
   field    String?           @db.VarChar(255)
   oldValue String?           @db.VarChar(1000)
   newValue String?           @db.VarChar(1000)
   changeAt DateTime          @default(now()) @map("change_id")
+  task     Task              @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("task_history")
 }

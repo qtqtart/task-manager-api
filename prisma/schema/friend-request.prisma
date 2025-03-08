@@ -3,9 +3,9 @@ model FriendRequest {
   createdAt  DateTime           @default(now()) @map("created_at")
   status     FiendRequestStatus @default(PENDING)
   senderId   String             @map("sender_id")
-  sender     User               @relation("SentFriendRequests", fields: [senderId], references: [id], onDelete: Cascade)
   receiverId String             @map("receiver_id")
   receiver   User               @relation("ReceivedFriendRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+  sender     User               @relation("SentFriendRequests", fields: [senderId], references: [id], onDelete: Cascade)
 
   @@unique([senderId, receiverId])
   @@map("friend_requests")
