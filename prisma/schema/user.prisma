@@ -1,11 +1,21 @@
 model User {
-  id           String   @id @default(uuid()) @map("id")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-  username     String   @unique @db.VarChar(255)
-  email        String   @unique @db.VarChar(255)
-  passwordHash String   @map("password_hash")
-  tokens       Token[]
+  id                     String          @id @default(uuid()) @map("id")
+  createdAt              DateTime        @default(now()) @map("created_at")
+  updatedAt              DateTime        @updatedAt @map("updated_at")
+  username               String          @unique @db.VarChar(255)
+  email                  String          @unique @db.VarChar(255)
+  passwordHash           String          @map("password_hash")
+  friends                Friend[]        @relation("UserFriends")
+  friendOf               Friend[]        @relation("FriendUsers")
+  sentFriendRequests     FriendRequest[] @relation("SentFriendRequests")
+  receivedFriendRequests FriendRequest[] @relation("ReceivedFriendRequests")
+  assignedTasks          Task[]          @relation("TaskAssignees")
+  tokens                 Token[]
+  notifications          Notification[]
+  tasks                  Task[]
+  taskHistory            TaskHistory[]
+  taskComments           TaskComment[]
+  projectMembers         ProjectMember[]
 
   @@map("users")
 }

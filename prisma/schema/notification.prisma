@@ -1,0 +1,25 @@
+model Notification {
+  id        String             @id @default(uuid()) @map("id")
+  createdAt DateTime           @default(now()) @map("created_at")
+  status    NotificationStatus @default(UNREAD)
+  type      NotificationType   @default(INFO)
+  metadata  Json?
+  userId    String             @map("user_id")
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+enum NotificationStatus {
+  UNREAD
+  READ
+}
+
+enum NotificationType {
+  INFO
+  INVITED_TO_PROJECT
+  ASSIGNED_TO_TASK
+  FRIEND_REQUEST
+  FRIEND_REQUEST_ACCEPTED
+  FRIEND_REQUEST_REJECTED
+}
