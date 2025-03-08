@@ -1,0 +1,38 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_DB}
+    ports:
+      - ${DATABASE_PORT}:${DATABASE_PORT}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - network
+
+  minio:
+    container_name: minio
+    image: quay.io/minio/minio:latest
+    restart: always
+    environment:
+      - MINIO_ROOT_USER=${S3_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${S3_ROOT_PASSWORD}
+    ports:
+      - ${S3_PORT}:${S3_PORT}
+      - ${S3_CONSOLE_PORT}:${S3_CONSOLE_PORT}
+    command: minio server --console-address ":${S3_CONSOLE_PORT}" /data
+    volumes:
+      - minio_data:/data
+    networks:
+      - network
+
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  network:
