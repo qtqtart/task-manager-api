@@ -1,5 +1,6 @@
 import { EnvironmentService } from '@app/environment/environment.service';
 import { PrismaService } from '@app/prisma/prisma.service';
+import { S3Service } from '@app/s3/s3.service';
 import { TokenService } from '@modules/token/token.service';
 import { RefreshToken } from '@modules/token/token.types';
 import { COOKIE_KEYS } from '@shared/consts/cookie-keys';
@@ -18,8 +19,9 @@ import { SignUpDto } from './dtos/sign-up.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly prismaService: PrismaService,
     private readonly environmentService: EnvironmentService,
+    private readonly prismaService: PrismaService,
+    private readonly s3Service: S3Service,
     private readonly tokenService: TokenService,
   ) {}
 
@@ -42,7 +44,12 @@ export class AuthService {
     return { accessToken };
   }
 
-  async signUp(response: Response, dto: SignUpDto, userAgent: string) {
+  async signUp(
+    response: Response,
+    dto: SignUpDto,
+    userAgent: string,
+    file?: Express.Multer.File,
+  ) {
     const users = await this.prismaService.user.findMany({
       where: {
         OR: [{ username: dto.username }, { email: dto.email }],
@@ -51,9 +58,14 @@ export class AuthService {
 
     if (users.some(({ username }) => username === dto.username))
       throw new ConflictException('user already exist with username');
-
     if (users.some(({ email }) => email === dto.email))
       throw new ConflictException('user already exist with email');
+
+    let imageUrl: string | null = null;
+    if (file) {
+      const key = `${dto.username}/image/${file.originalname}`;
+      imageUrl = await this.s3Service.upload(file.buffer, key, file.mimetype);
+    }
 
     const passwordHash = await hash(dto.password);
     const { id } = await this.prismaService.user.create({
@@ -61,6 +73,7 @@ export class AuthService {
         username: dto.username,
         email: dto.email,
         passwordHash,
+        imageUrl,
       },
     });
 

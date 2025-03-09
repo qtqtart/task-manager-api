@@ -10,7 +10,10 @@ import {
   Post,
   Res,
   UnauthorizedException,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 
 import { AuthService } from './auth.service';
@@ -24,26 +27,31 @@ export class AuthController {
 
   @Public()
   @Post('sign-in')
-  @HttpCode(HttpStatus.CREATED)
   async singIn(
     @Res() response: Response,
     @Body() dto: SignInDto,
     @UserAgent() userAgent: string,
   ) {
     const accessToken = await this.authService.signIn(response, dto, userAgent);
-    return { accessToken };
+    return response.json({ accessToken });
   }
 
   @Public()
   @Post('sign-up')
-  @HttpCode(HttpStatus.CREATED)
+  @UseInterceptors(FileInterceptor('file'))
   async signUp(
     @Res() response: Response,
     @Body() dto: SignUpDto,
     @UserAgent() userAgent: string,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
-    const accessToken = await this.authService.signUp(response, dto, userAgent);
-    return { accessToken };
+    const accessToken = await this.authService.signUp(
+      response,
+      dto,
+      userAgent,
+      file,
+    );
+    return response.json({ accessToken });
   }
 
   @Post('sign-out')
@@ -61,7 +69,6 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @HttpCode(HttpStatus.CREATED)
   async refresh(
     @Res() response: Response,
     @Cookie(COOKIE_KEYS.REFRESH_TOKEN) refreshToken: string,
@@ -71,6 +78,6 @@ export class AuthController {
     }
 
     const accessToken = await this.authService.refresh(response, refreshToken);
-    return { accessToken };
+    return response.json({ accessToken });
   }
 }

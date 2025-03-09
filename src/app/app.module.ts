@@ -1,5 +1,6 @@
 import { AuthModule } from '@modules/auth/auth.module';
 import { JwtGuard } from '@modules/auth/guards/jwt.guard';
+import { UserModule } from '@modules/user/user.module';
 
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
@@ -9,7 +10,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { S3Module } from './s3/s3.module';
 
 @Module({
-  imports: [EnvironmentModule, PrismaModule, AuthModule, S3Module],
+  imports: [EnvironmentModule, PrismaModule, S3Module, AuthModule, UserModule],
   providers: [
     {
       provide: APP_GUARD,

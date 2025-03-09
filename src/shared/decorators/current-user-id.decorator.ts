@@ -1,10 +1,10 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
 
-export const UserAgent = createParamDecorator(
+export const CurrentUserId = createParamDecorator(
   (_: undefined, context: ExecutionContext) => {
     const request: Request = context.switchToHttp().getRequest();
-    const { headers } = request;
-    return headers['user-agent'];
+    const { user } = request;
+    return user.id;
   },
 );

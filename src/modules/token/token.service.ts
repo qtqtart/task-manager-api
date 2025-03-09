@@ -27,7 +27,7 @@ export class TokenService {
       },
     });
 
-    const isExipred = new Date(token.expiresIn) < new Date();
+    const isExipred = new Date(token?.expiresIn) < new Date();
 
     if (!token || isExipred) throw new UnauthorizedException();
 
@@ -67,8 +67,6 @@ export class TokenService {
   private async upsertRefreshToken(userId: string, userAgent: string) {
     const now = new Date();
     const expiresIn = new Date(new Date(now).setMonth(now.getMonth() + 1));
-
-    // Поиск существующего токена
     const token = await this.prismaService.token.findFirst({
       where: {
         userId,
@@ -78,7 +76,7 @@ export class TokenService {
 
     let refreshToken: RefreshToken;
 
-    if (token) {
+    if (token)
       refreshToken = await this.prismaService.token.update({
         where: {
           id: token.id,
@@ -88,7 +86,7 @@ export class TokenService {
           expiresIn,
         },
       });
-    } else {
+    else
       refreshToken = await this.prismaService.token.create({
         data: {
           hash: uuid(),
@@ -97,7 +95,6 @@ export class TokenService {
           userAgent,
         },
       });
-    }
 
     return {
       hash: refreshToken.hash,

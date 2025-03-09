@@ -2,10 +2,10 @@ model User {
   id                     String          @id @default(uuid()) @map("id")
   createdAt              DateTime        @default(now()) @map("created_at")
   updatedAt              DateTime        @updatedAt @map("updated_at")
-  image                  String?
   username               String          @unique @db.VarChar(255)
   email                  String          @unique @db.VarChar(255)
   passwordHash           String          @map("password_hash")
+  imageUrl               String?
   friendOf               Friend[]        @relation("FriendUsers")
   friends                Friend[]        @relation("UserFriends")
   receivedFriendRequests FriendRequest[] @relation("ReceivedFriendRequests")

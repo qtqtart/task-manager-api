@@ -35,6 +35,4 @@ export class SignUpDto {
   @MaxLength(255)
   @Confirm(SignUpDto, (dto) => dto.password)
   passwordConfirm: string;
-
-  image?: Express.Multer.File;
 }
