@@ -8,6 +8,7 @@ model Project {
   imageUrl       String?
   projectMembers ProjectMember[]
   tasks          Task[]
+  tags           Tag[]
 
   @@index([isArchived])
   @@map("projects")
