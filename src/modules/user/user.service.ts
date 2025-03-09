@@ -16,7 +16,7 @@ export class UserService {
     return plainToInstance(UserResponseDto, user);
   }
 
-  async getAll() {
+  async getUsers() {
     const users = await this.prismaService.user.findMany();
     return users.map((user) => plainToInstance(UserResponseDto, user));
   }

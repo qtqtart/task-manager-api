@@ -5,7 +5,7 @@ export class UserResponseDto implements User {
   @Expose()
   id: string;
 
-  @Exclude()
+  @Expose()
   createdAt: Date;
 
   @Exclude()
@@ -16,6 +16,12 @@ export class UserResponseDto implements User {
 
   @Expose()
   email: string;
+
+  @Expose()
+  firstName: string;
+
+  @Expose()
+  lastName: string;
 
   @Exclude()
   passwordHash: string;

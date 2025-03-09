@@ -8,18 +8,13 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('me')
-  async me(@CurrentUserId() id: string) {
-    return await this.userService.getById(id);
-  }
-
   @Get(':id')
   async getById(@Param('id') id: string) {
     return await this.userService.getById(id);
   }
 
   @Get()
-  async getAll() {
-    return await this.userService.getAll();
+  async getUsers() {
+    return await this.userService.getUsers();
   }
 }

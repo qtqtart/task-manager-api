@@ -2,16 +2,15 @@ import { EnvironmentService } from '@app/environment/environment.service';
 
 import {
   DeleteObjectCommand,
-  GetObjectAclCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class S3Service {
   private readonly client: S3Client;
+  private readonly imageUrlPrefix: string;
 
   public constructor(private readonly environmentService: EnvironmentService) {
     this.client = new S3Client({
@@ -23,6 +22,8 @@ export class S3Service {
         secretAccessKey: environmentService.get('S3_SECRET_ACCESS_KEY'),
       },
     });
+
+    this.imageUrlPrefix = `${this.environmentService.get('S3_ENDPOINT')}/${this.environmentService.get('S3_BUCKET')}`;
   }
 
   public async upload(buffer: Buffer, key: string, mimetype: string) {
@@ -35,8 +36,6 @@ export class S3Service {
         ACL: 'public-read',
       }),
     );
-
-    return `${this.environmentService.get('S3_ENDPOINT')}/${this.environmentService.get('S3_BUCKET')}/${key}`;
   }
 
   public async remove(key: string) {
@@ -46,5 +45,16 @@ export class S3Service {
         Key: key,
       }),
     );
+  }
+
+  public keyToImageUrl(key: string) {
+    if (!key) return null;
+    return `${this.imageUrlPrefix}/${key}`;
+  }
+
+  public imageUrlToKey(imageUrl: string) {
+    if (!imageUrl) return null;
+    if (!imageUrl.startsWith(this.imageUrlPrefix)) return null;
+    return imageUrl.slice(this.imageUrlPrefix.length + 1);
   }
 }

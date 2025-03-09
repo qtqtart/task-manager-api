@@ -6,9 +6,11 @@ model Project {
   description    String?         @db.VarChar(1000)
   isArchived     Boolean         @default(false) @map("is_archived")
   imageUrl       String?
+  userId         String          @map("user_id")
   projectMembers ProjectMember[]
-  tasks          Task[]
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   tags           Tag[]
+  tasks          Task[]
 
   @@index([isArchived])
   @@map("projects")

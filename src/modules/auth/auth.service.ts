@@ -26,18 +26,23 @@ export class AuthService {
   ) {}
 
   async signIn(response: Response, dto: SignInDto, userAgent: string) {
-    const user = await this.prismaService.user.findFirst({
+    const isExistUser = await this.prismaService.user.findFirst({
       where: {
         OR: [{ username: dto.login }, { email: dto.login }],
       },
     });
 
-    if (!user) throw new UnauthorizedException('Invalid credentials');
-    const isVerified = await verify(user.passwordHash, dto.password);
-    if (!isVerified) throw new UnauthorizedException('Invalid credentials');
+    if (!isExistUser) throw new UnauthorizedException('Invalid credentials');
+    const isVerifiedPassword = await verify(
+      isExistUser.passwordHash,
+      dto.password,
+    );
+
+    if (!isVerifiedPassword)
+      throw new UnauthorizedException('Invalid credentials');
 
     const { accessToken, refreshToken } = await this.tokenService.getTokens(
-      user.id,
+      isExistUser.id,
       userAgent,
     );
     this.setRefreshTokenToCookie(response, refreshToken);
@@ -61,24 +66,34 @@ export class AuthService {
     if (users.some(({ email }) => email === dto.email))
       throw new ConflictException('user already exist with email');
 
-    let imageUrl: string | null = null;
-    if (file) {
-      const key = `${dto.username}/image/${file.originalname}`;
-      imageUrl = await this.s3Service.upload(file.buffer, key, file.mimetype);
-    }
-
     const passwordHash = await hash(dto.password);
-    const { id } = await this.prismaService.user.create({
+    const user = await this.prismaService.user.create({
       data: {
         username: dto.username,
         email: dto.email,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
         passwordHash,
-        imageUrl,
       },
     });
 
+    if (file) {
+      const key = `${user.id}/image/${file.originalname}`;
+      await this.s3Service.upload(file.buffer, key, file.mimetype);
+      const imageUrl = this.s3Service.keyToImageUrl(key);
+
+      await this.prismaService.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          imageUrl,
+        },
+      });
+    }
+
     const { accessToken, refreshToken } = await this.tokenService.getTokens(
-      id,
+      user.id,
       userAgent,
     );
     this.setRefreshTokenToCookie(response, refreshToken);
