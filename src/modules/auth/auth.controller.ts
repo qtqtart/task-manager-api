@@ -33,7 +33,7 @@ export class AuthController {
     @UserAgent() userAgent: string,
   ) {
     const accessToken = await this.authService.signIn(response, dto, userAgent);
-    return response.json({ accessToken });
+    return response.json(accessToken);
   }
 
   @Public()
@@ -51,13 +51,16 @@ export class AuthController {
       userAgent,
       file,
     );
-    return response.json({ accessToken });
+    return response.json(accessToken);
   }
 
   @Post('sign-out')
   @HttpCode(HttpStatus.OK)
   async signOut(
-    @Res() response: Response,
+    @Res({
+      passthrough: true,
+    })
+    response: Response,
     @Cookie(COOKIE_KEYS.REFRESH_TOKEN) refreshToken: string,
   ) {
     if (!refreshToken) {
@@ -66,6 +69,7 @@ export class AuthController {
     }
 
     await this.authService.signOut(response, refreshToken);
+    return;
   }
 
   @Post('refresh')
@@ -78,6 +82,6 @@ export class AuthController {
     }
 
     const accessToken = await this.authService.refresh(response, refreshToken);
-    return response.json({ accessToken });
+    return response.json(accessToken);
   }
 }

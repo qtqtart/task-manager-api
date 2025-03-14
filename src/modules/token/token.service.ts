@@ -1,10 +1,12 @@
 import { PrismaService } from '@app/prisma/prisma.service';
 
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuid } from 'uuid';
-
-import { RefreshToken, Tokens } from './token.types';
 
 @Injectable()
 export class TokenService {
@@ -13,92 +15,73 @@ export class TokenService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async getTokens(userId: string, userAgent: string) {
-    return {
-      accessToken: await this.createAccessToken(userId),
-      refreshToken: await this.upsertRefreshToken(userId, userAgent),
-    } as Tokens;
-  }
-
-  async upsertTokens(refreshToken: string) {
-    const token = await this.prismaService.token.delete({
+  async refresh(hash: string) {
+    const token = await this.prismaService.token.findUnique({
       where: {
-        hash: refreshToken,
+        hash,
       },
     });
+    if (!token) throw new UnauthorizedException('Refresh token not found');
 
-    const isExipred = new Date(token?.expiresIn) < new Date();
+    const isExpired = new Date(token.expiresIn) < new Date();
+    if (isExpired) {
+      await this.prismaService.token.delete({
+        where: {
+          hash,
+        },
+      });
+      throw new UnauthorizedException('Refresh token expired');
+    }
 
-    if (!token || isExipred) throw new UnauthorizedException();
-
-    return {
-      accessToken: await this.createAccessToken(token.userId),
-      refreshToken: await this.upsertRefreshToken(
-        token.userId,
-        token.userAgent,
-      ),
-    } as Tokens;
+    await this.deleteRefreshToken(hash);
+    const { accessToken } = await this.createAccessToken(token.userId);
+    const { refreshToken } = await this.createRefreshToken(
+      token.userId,
+      token.userAgent,
+    );
+    return { accessToken, refreshToken };
   }
 
-  async deleteRefreshToken(refreshToken: string) {
-    return await this.prismaService.token.delete({
-      where: {
-        hash: refreshToken,
-      },
-    });
-  }
-
-  private async createAccessToken(userId: string) {
+  async createAccessToken(userId: string) {
     const user = await this.prismaService.user.findUnique({
       where: {
         id: userId,
       },
     });
+    if (!user) throw new NotFoundException('User not found');
 
-    const accessToken = `Bearer ${this.jwtService.sign({
+    const accessToken = this.jwtService.sign({
       id: user.id,
       username: user.username,
       email: user.email,
-    })}`;
-
-    return accessToken;
+    });
+    return { accessToken };
   }
 
-  private async upsertRefreshToken(userId: string, userAgent: string) {
-    const now = new Date();
-    const expiresIn = new Date(new Date(now).setMonth(now.getMonth() + 1));
-    const token = await this.prismaService.token.findFirst({
-      where: {
+  async createRefreshToken(userId: string, userAgent: string) {
+    const { expiresIn } = this.getExpiresIn();
+    const refreshToken = await this.prismaService.token.create({
+      data: {
+        hash: uuid(),
+        expiresIn,
         userId,
         userAgent,
       },
     });
+    return { refreshToken };
+  }
 
-    let refreshToken: RefreshToken;
+  async deleteRefreshToken(hash: string) {
+    await this.prismaService.token.delete({
+      where: {
+        hash,
+      },
+    });
+  }
 
-    if (token)
-      refreshToken = await this.prismaService.token.update({
-        where: {
-          id: token.id,
-        },
-        data: {
-          hash: uuid(),
-          expiresIn,
-        },
-      });
-    else
-      refreshToken = await this.prismaService.token.create({
-        data: {
-          hash: uuid(),
-          expiresIn,
-          userId,
-          userAgent,
-        },
-      });
-
-    return {
-      hash: refreshToken.hash,
-      expiresIn: refreshToken.expiresIn,
-    } as RefreshToken;
+  private getExpiresIn() {
+    const expiresIn = new Date();
+    expiresIn.setMonth(expiresIn.getMonth() + 1);
+    return { expiresIn };
   }
 }

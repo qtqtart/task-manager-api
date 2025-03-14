@@ -3,6 +3,7 @@ import { EnvironmentService } from '@app/environment/environment.service';
 
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import * as cookieParser from 'cookie-parser';
 
 (async () => {
   const application = await NestFactory.create(AppModule);
@@ -17,6 +18,7 @@ import { NestFactory } from '@nestjs/core';
     }),
   );
 
+  application.use(cookieParser());
   application.enableCors({
     credentials: true,
     origin: environmentService.get('ALLOWED_ORIGIN'),

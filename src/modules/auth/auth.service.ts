@@ -5,11 +5,7 @@ import { TokenService } from '@modules/token/token.service';
 import { RefreshToken } from '@modules/token/token.types';
 import { COOKIE_KEYS } from '@shared/consts/cookie-keys';
 
-import {
-  ConflictException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { hash, verify } from 'argon2';
 import { Response } from 'express';
 
@@ -26,26 +22,22 @@ export class AuthService {
   ) {}
 
   async signIn(response: Response, dto: SignInDto, userAgent: string) {
-    const isExistUser = await this.prismaService.user.findFirst({
+    const user = await this.prismaService.user.findFirst({
       where: {
         OR: [{ username: dto.login }, { email: dto.login }],
       },
     });
 
-    if (!isExistUser) throw new UnauthorizedException('Invalid credentials');
-    const isVerifiedPassword = await verify(
-      isExistUser.passwordHash,
-      dto.password,
-    );
+    if (!user) throw new ConflictException('Invalid credentials');
+    const isVerifiedPassword = await verify(user.passwordHash, dto.password);
+    if (!isVerifiedPassword) throw new ConflictException('Invalid credentials');
 
-    if (!isVerifiedPassword)
-      throw new UnauthorizedException('Invalid credentials');
-
-    const { accessToken, refreshToken } = await this.tokenService.getTokens(
-      isExistUser.id,
+    const { accessToken } = await this.tokenService.createAccessToken(user.id);
+    const { refreshToken } = await this.tokenService.createRefreshToken(
+      user.id,
       userAgent,
     );
-    this.setRefreshTokenToCookie(response, refreshToken);
+    this.setCookie(response, refreshToken);
     return { accessToken };
   }
 
@@ -92,45 +84,31 @@ export class AuthService {
       });
     }
 
-    const { accessToken, refreshToken } = await this.tokenService.getTokens(
+    const { accessToken } = await this.tokenService.createAccessToken(user.id);
+    const { refreshToken } = await this.tokenService.createRefreshToken(
       user.id,
       userAgent,
     );
-    this.setRefreshTokenToCookie(response, refreshToken);
+    this.setCookie(response, refreshToken);
     return { accessToken };
   }
 
-  async signOut(response: Response, refreshToken: string) {
-    this.removeRefreshTokenFromCookie(response);
-    await this.tokenService.deleteRefreshToken(refreshToken);
+  async signOut(response: Response, hash: string) {
+    response.clearCookie(COOKIE_KEYS.REFRESH_TOKEN);
+    await this.tokenService.deleteRefreshToken(hash);
   }
 
-  async refresh(response: Response, refreshTokenHash: string) {
-    const tokens = await this.tokenService.upsertTokens(refreshTokenHash);
-    this.setRefreshTokenToCookie(response, tokens.refreshToken);
-    return { accessToken: tokens.accessToken };
+  async refresh(response: Response, hash: string) {
+    const { accessToken, refreshToken } = await this.tokenService.refresh(hash);
+    this.setCookie(response, refreshToken);
+    return { accessToken };
   }
 
-  private setRefreshTokenToCookie(
-    response: Response,
-    refreshToken: RefreshToken,
-  ) {
-    if (!refreshToken) throw new UnauthorizedException();
-
-    response.cookie(COOKIE_KEYS.REFRESH_TOKEN, refreshToken.hash, {
-      expires: new Date(refreshToken.expiresIn),
+  private setCookie(response: Response, { hash, expiresIn }: RefreshToken) {
+    response.cookie(COOKIE_KEYS.REFRESH_TOKEN, hash, {
+      expires: new Date(expiresIn),
       httpOnly: this.environmentService.get('COOKIE_HTTP_ONLY'),
-      secure: this.environmentService.get('COOKIE_SECURE'),
-      sameSite: 'lax',
-      path: '/',
-    });
-  }
-
-  private removeRefreshTokenFromCookie(response: Response) {
-    response.cookie(COOKIE_KEYS.REFRESH_TOKEN, undefined, {
-      expires: new Date(),
-      httpOnly: this.environmentService.get('COOKIE_HTTP_ONLY'),
-      secure: this.environmentService.get('COOKIE_SECURE'),
+      secure: false,
       sameSite: 'lax',
       path: '/',
     });

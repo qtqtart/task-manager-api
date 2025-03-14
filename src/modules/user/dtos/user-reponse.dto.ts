@@ -5,7 +5,7 @@ export class UserResponseDto implements User {
   @Expose()
   id: string;
 
-  @Expose()
+  @Exclude()
   createdAt: Date;
 
   @Exclude()
@@ -27,5 +27,5 @@ export class UserResponseDto implements User {
   passwordHash: string;
 
   @Expose()
-  imageUrl: string;
+  imageUrl: string | null;
 }
