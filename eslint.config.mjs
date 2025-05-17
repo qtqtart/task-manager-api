@@ -1,17 +1,17 @@
-import js from '@eslint/js';
-import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import prettierPlugin from 'eslint-plugin-prettier';
-import globals from 'globals';
-import ts from 'typescript-eslint';
+import js from "@eslint/js";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
+import prettierPlugin from "eslint-plugin-prettier";
+import globals from "globals";
+import ts from "typescript-eslint";
 
-export default ts.config(
+const config = ts.config(
   js.configs.recommended,
   ...ts.configs.recommended,
   {
-    ignores: ['dist', 'node_modules'],
+    ignores: ["dist", "node_modules"],
   },
   {
-    files: ['**/*.ts'],
+    files: ["**/*.ts"],
     languageOptions: {
       globals: {
         ...globals.es2025,
@@ -20,31 +20,20 @@ export default ts.config(
     },
     plugins: {
       prettier: prettierPlugin,
-      //
-      'simple-import-sort': simpleImportSort,
+      "simple-import-sort": simpleImportSort,
     },
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
-      '@typescript-eslint/no-empty-object-type': 'off',
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-empty-object-type": "off",
       //
-      'no-unused-vars': 'off',
-      'no-undef': 'off',
+      "no-unused-vars": "off",
+      "no-undef": "off",
       //
-      'simple-import-sort/imports': [
-        'error',
-        {
-          groups: [
-            ['^(@app)(/.*|$)', '^(@modules)(/.*|$)', '^(@shared)(/.*|$)'],
-            ['^\\u0000'],
-            ['^node:'],
-            ['^@?\\w'],
-            ['^'],
-            ['^\\.'],
-          ],
-        },
-      ],
-      'simple-import-sort/exports': 'error',
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error",
     },
   },
 );
+
+export default config;

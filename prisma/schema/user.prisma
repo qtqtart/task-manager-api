@@ -1,25 +1,23 @@
 model User {
-  id                     String          @id @default(uuid()) @map("id")
-  createdAt              DateTime        @default(now()) @map("created_at")
-  updatedAt              DateTime        @updatedAt @map("updated_at")
-  username               String          @unique @db.VarChar(255)
-  email                  String          @unique @db.VarChar(255)
-  passwordHash           String          @map("password_hash")
-  imageUrl               String?
-  firstName              String          @map("first_name") @db.VarChar(255)
-  lastName               String          @map("last_name") @db.VarChar(255)
-  friendOf               Friend[]        @relation("FriendUsers")
-  friends                Friend[]        @relation("UserFriends")
-  receivedFriendRequests FriendRequest[] @relation("ReceivedFriendRequests")
-  sentFriendRequests     FriendRequest[] @relation("SentFriendRequests")
-  notifications          Notification[]
-  projectMembers         ProjectMember[]
-  projects               Project[]
-  taskComments           TaskComment[]
-  taskHistory            TaskHistory[]
-  tasks                  Task[]
-  tokens                 Token[]
-  assignedTasks          Task[]          @relation("TaskAssignees")
+  id             String          @id @default(uuid())
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  //
+  username       String          @unique @db.VarChar(255)
+  email          String          @unique @db.VarChar(255)
+  password       String
+  //
+  firstName      String?         @map("first_name")
+  lastName       String?         @map("last_name")
+  //
+  imageUrl       String?         @map("image_url")
+  //
+  projects       Project[]
+  ProjectMembers ProjectMember[]
+  tasks          Task[]
+  taskAssignees  TaskAssignee[]
+  taskFiles      TaskFile[]
 
+  //
   @@map("users")
 }

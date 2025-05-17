@@ -1,31 +1,41 @@
-import { AuthModule } from '@modules/auth/auth.module';
-import { JwtGuard } from '@modules/auth/guards/jwt.guard';
-import { MeModule } from '@modules/me/me.module';
-import { ProjectModule } from '@modules/project/project.module';
-import { UserModule } from '@modules/user/user.module';
+import { AccountModule } from "@entities/account/account.module";
+import { AuthModule } from "@entities/auth/auth.module";
+import { ProjectModule } from "@entities/project/project.module";
+import { SessionModule } from "@entities/session/session.module";
+import { TaskModule } from "@entities/task/task.module";
+import { TaskFilesModule } from "@entities/task-files/task-files.module";
+import { UserModule } from "@entities/user/user.module";
+import { ApolloDriver } from "@nestjs/apollo";
+import { Module } from "@nestjs/common";
+import { GraphQLModule } from "@nestjs/graphql";
+import { getGraphQLConfig } from "@shared/configs/graphql.config";
 
-import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
-
-import { EnvironmentModule } from './environment/environment.module';
-import { PrismaModule } from './prisma/prisma.module';
-import { S3Module } from './s3/s3.module';
-
+import { EnvironmentModule } from "./environment/environment.module";
+import { EnvironmentService } from "./environment/environment.service";
+import { PrismaModule } from "./prisma/prisma.module";
+import { RedisModule } from "./redis/redis.module";
+import { S3Module } from "./s3/s3.module";
 @Module({
   imports: [
+    GraphQLModule.forRootAsync({
+      driver: ApolloDriver,
+      useFactory: getGraphQLConfig,
+      imports: [EnvironmentModule],
+      inject: [EnvironmentService],
+    }),
+    //
     EnvironmentModule,
     PrismaModule,
+    RedisModule,
     S3Module,
+    //
+    AccountModule,
     AuthModule,
-    MeModule,
     ProjectModule,
+    SessionModule,
+    TaskModule,
+    TaskFilesModule,
     UserModule,
-  ],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: JwtGuard,
-    },
   ],
 })
 export class AppModule {}

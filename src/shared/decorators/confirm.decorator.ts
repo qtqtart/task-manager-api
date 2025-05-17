@@ -1,11 +1,11 @@
-import { ClassConstructor } from 'class-transformer';
+import { ClassConstructor } from "class-transformer";
 import {
   registerDecorator,
   ValidationArguments,
   ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
-} from 'class-validator';
+} from "class-validator";
 
 export const Confirm = <T>(
   _: ClassConstructor<T>,
@@ -23,7 +23,7 @@ export const Confirm = <T>(
   };
 };
 
-@ValidatorConstraint({ name: 'Confirm' })
+@ValidatorConstraint({ name: "Confirm" })
 export class ConfirmConstraint implements ValidatorConstraintInterface {
   validate(value: any, args: ValidationArguments) {
     const [fn] = args.constraints;

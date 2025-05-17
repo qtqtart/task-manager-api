@@ -1,17 +1,21 @@
 model Project {
-  id             String          @id @default(uuid()) @map("id")
+  id             String          @id @default(uuid())
   createdAt      DateTime        @default(now()) @map("created_at")
   updatedAt      DateTime        @updatedAt @map("updated_at")
+  //
   title          String          @unique @db.VarChar(255)
   description    String?         @db.VarChar(1000)
-  isArchived     Boolean         @default(false) @map("is_archived")
-  imageUrl       String?
+  imageUrl       String?         @map("image_url")
+  //
   userId         String          @map("user_id")
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  //
+  isArchived     Boolean         @default(false) @map("is_archived")
+  //
   projectMembers ProjectMember[]
-  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tags           Tag[]
   tasks          Task[]
 
+  //
   @@index([isArchived])
   @@map("projects")
 }

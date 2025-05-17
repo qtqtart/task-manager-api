@@ -1,7 +1,9 @@
-import { User as _User } from '@prisma/client';
+import { User } from "@prisma/client";
 
 declare global {
   namespace Express {
-    interface User extends Pick<_User, 'id'> {}
+    interface Request {
+      user?: Omit<User, "password">;
+    }
   }
 }
