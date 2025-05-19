@@ -1,8 +1,8 @@
 import { Global, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { validate } from "class-validator";
 
 import { EnvironmentService } from "./environment.service";
+import { validate } from "./environment.utils";
 @Global()
 @Module({
   imports: [

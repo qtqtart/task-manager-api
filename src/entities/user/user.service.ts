@@ -36,19 +36,28 @@ export class UserService {
   public async create(input: CreateUserInput, file: FileUpload) {
     await this.checkUniqUsername(input);
     await this.checkUniqEmail(input);
-    const { minetype, buffer } = await processBuffer(file);
-    const imageUrl = await this.s3Service.upload(
-      buffer,
-      `/user/${Date.now()}-${file.filename}`,
-      minetype,
-    );
+
+    let imageUrl: string = undefined;
+    if (file) {
+      const { minetype, buffer } = await processBuffer(file);
+      imageUrl = await this.s3Service.upload(
+        buffer,
+        `/user/${Date.now()}-${file.filename}`,
+        minetype,
+      );
+    }
 
     const password = await hash(input.password);
     return await this.prismaService.user.create({
       data: {
-        ...input,
-        imageUrl,
+        username: input.username,
+        email: input.email,
+        firstName: input.firstName,
+        lastName: input.lastName,
         password,
+        ...(imageUrl && {
+          imageUrl,
+        }),
       },
       select: USER_SELECT,
     });

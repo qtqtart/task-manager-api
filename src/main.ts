@@ -21,7 +21,6 @@ import * as ms from "ms";
   );
 
   application.use(cookieParser(environmentService.get("COOKIE_SECRET")));
-  application.use(environmentService.get("GRAPHQL_PREFIX"), graphqlUpload());
   application.use(
     session({
       name: environmentService.get("SESSION_NAME"),
@@ -41,6 +40,8 @@ import * as ms from "ms";
       }),
     }),
   );
+
+  application.use(environmentService.get("GRAPHQL_PREFIX"), graphqlUpload());
 
   application.enableCors({
     credentials: true,

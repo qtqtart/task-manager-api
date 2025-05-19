@@ -8,8 +8,12 @@ export const getGraphQLConfig = (
   path: environmentService.get("GRAPHQL_PREFIX"),
   autoSchemaFile: join(process.cwd(), "src/shared/schema.gql"),
   context: ({ req, res }) => ({ req, res }),
-  playground: true,
   installSubscriptionHandlers: true,
   introspection: true,
   sortSchema: true,
+  playground: {
+    settings: {
+      "request.credentials": "include",
+    },
+  },
 });

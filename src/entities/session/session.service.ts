@@ -17,7 +17,7 @@ export class SessionService {
             new InternalServerErrorException("session was not created"),
           );
         }
-        resolve({ user });
+        resolve(true);
       });
     });
   }

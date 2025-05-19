@@ -2,7 +2,8 @@ import { Authorization } from "@entities/auth/decorators/authorization.decorator
 import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FileValidationPipe } from "@shared/pipes/file-validation.pipe";
 import { GraphqlContext } from "@shared/types/graphql.types";
-import GraphQLUpload, { FileUpload } from "graphql-upload/GraphQLUpload.mjs";
+import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
+import Upload from "graphql-upload/Upload.mjs";
 
 import { TaskFileModel } from "./task-file.model";
 import { TaskFilesService } from "./task-files.service";
@@ -21,7 +22,7 @@ export class TaskFilesResolver {
     @Args("taskId") taskId: string,
     @Context() { req }: GraphqlContext,
     @Args("file", { type: () => GraphQLUpload }, FileValidationPipe)
-    file: FileUpload,
+    file: Upload,
   ) {
     return await this.taskFilesService.uploadFile(taskId, req.user.id, file);
   }

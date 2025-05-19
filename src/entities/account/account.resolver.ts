@@ -5,13 +5,15 @@ import { GraphqlContext } from "@shared/types/graphql.types";
 
 import { AccountService } from "./account.service";
 
-@Authorization()
 @Resolver("Account")
 export class AccountResolver {
   constructor(private readonly accountService: AccountService) {}
 
-  @Query(() => UserModel)
-  public async getCurrent(@Context() { req }: GraphqlContext) {
+  @Authorization()
+  @Query(() => UserModel, {
+    name: "getCurrentUser",
+  })
+  public async getCurrentUser(@Context() { req }: GraphqlContext) {
     return this.accountService.getCurrent(req);
   }
 }

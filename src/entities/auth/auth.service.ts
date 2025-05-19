@@ -9,6 +9,7 @@ import {
 import { verify } from "argon2";
 import { Request } from "express";
 import { FileUpload } from "graphql-upload/GraphQLUpload.mjs";
+import Upload from "graphql-upload/Upload.mjs";
 
 import { SignInInput } from "./inputs/sign-in.input";
 import { SignUpInput } from "./inputs/sign-up.input";
@@ -24,16 +25,7 @@ export class AuthService {
   public async singIn(req: Request, input: SignInInput) {
     const user = await this.prismaService.user.findFirst({
       where: {
-        OR: [
-          {
-            username: {
-              equals: input.login,
-            },
-            email: {
-              equals: input.login,
-            },
-          },
-        ],
+        OR: [{ username: input.login }, { email: input.login }],
       },
     });
     if (!user) {
@@ -47,8 +39,9 @@ export class AuthService {
 
     return this.sessionService.createSession(req, user);
   }
-  public async singUp(req: Request, input: SignUpInput, file: FileUpload) {
-    const user = await this.userService.create(input, file);
+  public async singUp(req: Request, input: SignUpInput, upload: Upload) {
+    const user = await this.userService.create(input, upload.file);
+    console.log(upload);
     return this.sessionService.createSession(req, user);
   }
   public singOut(req: Request) {

@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { getBuffer } from "@shared/utils/get-buffer.utils";
-import { FileUpload } from "graphql-upload/GraphQLUpload.mjs";
+import Upload from "graphql-upload/Upload.mjs";
 
 @Injectable()
 export class TaskFilesService {
@@ -27,7 +27,7 @@ export class TaskFilesService {
     });
   }
 
-  public async uploadFile(taskId: string, userId: string, file: FileUpload) {
+  public async uploadFile(taskId: string, userId: string, { file }: Upload) {
     const buffer = await getBuffer(file);
     const url = await this.s3Service.upload(
       buffer,

@@ -5,7 +5,9 @@ import { getBuffer } from "./get-buffer.utils";
 
 export const processBuffer = async (file: FileUpload) => {
   const buffer = await getBuffer(file);
-  const processedBuffer = await sharp(buffer)
+  const processedBuffer = await sharp(buffer, {
+    animated: file.filename.endsWith(".gif"),
+  })
     .resize(512, 512)
     .webp()
     .toBuffer();

@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { processBuffer } from "@shared/utils/process-buffer.utils";
-import { FileUpload } from "graphql-upload/GraphQLUpload.mjs";
+import Upload from "graphql-upload/Upload.mjs";
 
 import { CreateProjectInput } from "./inputs/create-project.input";
 import { ProjectFiltersInput } from "./inputs/project-filters.input";
@@ -59,7 +59,7 @@ export class ProjectService {
   public async create(
     userId: string,
     input: CreateProjectInput,
-    file: FileUpload,
+    { file }: Upload,
   ) {
     await this.checkUniqTitle(input);
     if (input.memberIds) {
@@ -96,7 +96,7 @@ export class ProjectService {
     projectId: string,
     userId: string,
     input: UpdateProjectInput,
-    file: FileUpload,
+    { file }: Upload,
   ) {
     const project = await this.getById(projectId);
     if (!project) {

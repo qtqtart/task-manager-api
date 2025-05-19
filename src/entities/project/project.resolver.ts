@@ -2,7 +2,8 @@ import { Authorization } from "@entities/auth/decorators/authorization.decorator
 import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FileValidationPipe } from "@shared/pipes/file-validation.pipe";
 import { GraphqlContext } from "@shared/types/graphql.types";
-import GraphQLUpload, { FileUpload } from "graphql-upload/GraphQLUpload.mjs";
+import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
+import Upload from "graphql-upload/Upload.mjs";
 
 import { CreateProjectInput } from "./inputs/create-project.input";
 import { ProjectFiltersInput } from "./inputs/project-filters.input";
@@ -31,7 +32,7 @@ export class ProjectResolver {
     @Context() { req }: GraphqlContext,
     @Args("input") input: CreateProjectInput,
     @Args("file", { type: () => GraphQLUpload }, FileValidationPipe)
-    file: FileUpload,
+    file: Upload,
   ) {
     return await this.projectService.create(req.user.id, input, file);
   }
@@ -41,7 +42,7 @@ export class ProjectResolver {
     @Context() { req }: GraphqlContext,
     @Args("input") input: UpdateProjectInput,
     @Args("file", { type: () => GraphQLUpload }, FileValidationPipe)
-    file: FileUpload,
+    file: Upload,
   ) {
     return await this.projectService.update(
       projectId,

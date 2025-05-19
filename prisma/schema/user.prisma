@@ -2,22 +2,17 @@ model User {
   id             String          @id @default(uuid())
   createdAt      DateTime        @default(now()) @map("created_at")
   updatedAt      DateTime        @updatedAt @map("updated_at")
-  //
   username       String          @unique @db.VarChar(255)
   email          String          @unique @db.VarChar(255)
-  password       String
-  //
   firstName      String?         @map("first_name")
   lastName       String?         @map("last_name")
-  //
   imageUrl       String?         @map("image_url")
-  //
-  projects       Project[]
+  password       String
   ProjectMembers ProjectMember[]
-  tasks          Task[]
+  projects       Project[]
   taskAssignees  TaskAssignee[]
   taskFiles      TaskFile[]
+  tasks          Task[]
 
-  //
   @@map("users")
 }

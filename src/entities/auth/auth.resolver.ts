@@ -2,6 +2,7 @@ import { Args, Context, Mutation, Resolver } from "@nestjs/graphql";
 import { FileValidationPipe } from "@shared/pipes/file-validation.pipe";
 import { GraphqlContext } from "@shared/types/graphql.types";
 import GraphQLUpload, { FileUpload } from "graphql-upload/GraphQLUpload.mjs";
+import Upload from "graphql-upload/Upload.mjs";
 
 import { AuthService } from "./auth.service";
 import { SignInInput } from "./inputs/sign-in.input";
@@ -11,23 +12,33 @@ import { SignUpInput } from "./inputs/sign-up.input";
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
-  @Mutation(() => Boolean)
+  @Mutation(() => Boolean, {
+    name: "signIn",
+  })
   public async signIn(
     @Context() { req }: GraphqlContext,
     @Args("input") input: SignInInput,
   ) {
     return await this.authService.singIn(req, input);
   }
-  @Mutation(() => Boolean)
+  @Mutation(() => Boolean, {
+    name: "signUp",
+  })
   public async singUp(
     @Context() { req }: GraphqlContext,
     @Args("input") input: SignUpInput,
-    @Args("file", { type: () => GraphQLUpload }, FileValidationPipe)
-    file: FileUpload,
+    @Args(
+      "file",
+      { type: () => GraphQLUpload, nullable: true },
+      FileValidationPipe,
+    )
+    upload: Upload,
   ) {
-    return await this.authService.singUp(req, input, file);
+    return await this.authService.singUp(req, input, upload);
   }
-  @Mutation(() => Boolean)
+  @Mutation(() => Boolean, {
+    name: "signOut",
+  })
   public async signOut(@Context() { req }: GraphqlContext) {
     return await this.authService.singOut(req);
   }

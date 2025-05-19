@@ -16,9 +16,9 @@ export class GraphQLAuthGuard implements CanActivate {
     executionContext: ExecutionContext,
   ): Promise<boolean> {
     const context = GqlExecutionContext.create(executionContext);
-    const req: Request = context.getContext();
+    const req: Request = context.getContext().req;
 
-    if (typeof req.session.userId === "undefined") {
+    if (typeof req.session?.userId === "undefined") {
       throw new UnauthorizedException("user not found");
     }
 

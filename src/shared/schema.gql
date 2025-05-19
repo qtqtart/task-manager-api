@@ -26,15 +26,13 @@ scalar DateTime
 type Mutation {
   createProject(file: Upload!, input: CreateProjectInput!): Boolean!
   createTask(input: CreateTaskInput!, projectId: String!): Boolean!
+  removeTaskFile(taskFileId: String!): Boolean!
   signIn(input: SignInInput!): Boolean!
   signOut: Boolean!
-  singUp(file: Upload!, input: SignUpInput!): Boolean!
-  updateProject(
-    file: Upload!
-    input: UpdateProjectInput!
-    projectId: String!
-  ): Boolean!
+  signUp(file: Upload, input: SignUpInput!): Boolean!
+  updateProject(file: Upload!, input: UpdateProjectInput!, projectId: String!): Boolean!
   updateTask(input: UpdateTaskInput!, taskId: String!): Boolean!
+  uploadTaskFile(file: Upload!, taskId: String!): Boolean!
 }
 
 input ProjectFiltersInput {
@@ -56,9 +54,10 @@ type ProjectModel {
 
 type Query {
   getAllProjects(filters: ProjectFiltersInput!): [ProjectModel!]!
+  getAllTaskFiles(taskId: String!): [TaskFileModel!]!
   getAllTasks(filters: TaskFiltersInput!, projectId: String!): [TaskModel!]!
   getAllUsers: [UserModel!]!
-  getCurrent: UserModel!
+  getCurrentUser: UserModel!
   getProjectById(projectId: String!): ProjectModel!
   getTaskById(taskId: String!): TaskModel!
 }
@@ -75,6 +74,16 @@ input SignUpInput {
   password: String!
   passwordConfirm: String!
   username: String!
+}
+
+type TaskFileModel {
+  fileName: String!
+  fileType: String!
+  id: ID!
+  size: Float!
+  taskId: ID!
+  url: String!
+  user: UserModel!
 }
 
 input TaskFiltersInput {
@@ -134,9 +143,7 @@ input UpdateTaskInput {
   title: String
 }
 
-"""
-The `Upload` scalar type represents a file upload.
-"""
+"""The `Upload` scalar type represents a file upload."""
 scalar Upload
 
 type UserModel {
