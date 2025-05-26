@@ -11,9 +11,6 @@ export class EnvironmentModel implements Environment {
   @IsNotEmpty()
   @IsString()
   ALLOWED_ORIGIN: string;
-  @IsNotEmpty()
-  @IsString()
-  GRAPHQL_PREFIX: string;
   //
   @IsNotEmpty()
   @IsString()

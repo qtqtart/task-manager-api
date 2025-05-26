@@ -1,7 +1,6 @@
 export interface Environment {
   APPLICATION_PORT: number;
   ALLOWED_ORIGIN: string;
-  GRAPHQL_PREFIX: string;
   //
   COOKIE_SECRET: string;
   SESSION_SECRET: string;

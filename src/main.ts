@@ -6,7 +6,6 @@ import { NestFactory } from "@nestjs/core";
 import { RedisStore } from "connect-redis";
 import * as cookieParser from "cookie-parser";
 import * as session from "express-session";
-import graphqlUpload from "graphql-upload/graphqlUploadExpress.mjs";
 import * as ms from "ms";
 
 (async () => {
@@ -40,8 +39,6 @@ import * as ms from "ms";
       }),
     }),
   );
-
-  application.use(environmentService.get("GRAPHQL_PREFIX"), graphqlUpload());
 
   application.enableCors({
     credentials: true,
