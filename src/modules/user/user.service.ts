@@ -27,7 +27,11 @@ export class UserService {
     const password = await hash(dto.password);
     return await this.prismaService.user.create({
       data: {
-        ...dto,
+        username: dto.username,
+        email: dto.email,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        imageUrl: dto.imageUrl,
         password,
       },
     });

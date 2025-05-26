@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUrl,
   Matches,
   MaxLength,
   MinLength,
@@ -34,4 +35,8 @@ export class CreateUserDto implements Partial<User> {
   @MinLength(6)
   @MaxLength(255)
   password: string;
+  @IsString()
+  @IsOptional()
+  @IsUrl()
+  imageUrl?: string;
 }

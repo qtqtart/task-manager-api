@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { CookieResolver, I18nModule, QueryResolver } from "nestjs-i18n";
 import { join } from "path";
 
+import { AccountModule } from "~modules/account/account.module";
 import { AuthModule } from "~modules/auth/auth.module";
 import { ProjectModule } from "~modules/project/project.module";
 import { SessionModule } from "~modules/session/session.module";
@@ -39,6 +40,7 @@ import { S3Module } from "./s3/s3.module";
     RedisModule,
     S3Module,
     //
+    AccountModule,
     AuthModule,
     ProjectModule,
     SessionModule,
