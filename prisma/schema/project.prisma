@@ -1,16 +1,18 @@
 model Project {
-  id             String          @id @default(uuid())
-  createdAt      DateTime        @default(now()) @map("created_at")
-  updatedAt      DateTime        @updatedAt @map("updated_at")
-  title          String          @unique @db.VarChar(255)
-  description    String?         @db.VarChar(1000)
-  imageUrl       String?         @map("image_url")
-  userId         String          @map("user_id")
-  isArchived     Boolean         @default(false) @map("is_archived")
-  projectMembers ProjectMember[]
-  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tasks          Task[]
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  title       String   @unique @db.VarChar(255)
+  description String?  @db.VarChar(1000)
+  imageUrl    String?  @map("image_url")
+  //
+  isArchived  Boolean  @default(false) @map("is_archived")
+  //
+  ownerId     String   @map("owner_id")
+  owner       User     @relation(fields: [ownerId], references: [id], name: "ProjectOwner", onUpdate: Cascade, onDelete: Cascade)
+  members     User[]   @relation("ProjectMembers")
+  //
+  tasks       Task[]
 
-  @@index([isArchived])
   @@map("projects")
 }

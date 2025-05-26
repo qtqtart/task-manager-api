@@ -30,7 +30,7 @@ export interface Environment {
   //
   REDIS_USER: string;
   REDIS_PASSWORD: string;
-  REDIST_HOST: string;
+  REDIS_HOST: string;
   REDIS_PORT: number;
   REDIS_URL: string;
 }

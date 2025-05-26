@@ -1,21 +1,23 @@
-import { AppModule } from "@app/app.module";
-import { EnvironmentService } from "@app/environment/environment.service";
-import { RedisService } from "@app/redis/redis.service";
-import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { RedisStore } from "connect-redis";
 import * as cookieParser from "cookie-parser";
 import * as session from "express-session";
 import * as ms from "ms";
+import { I18nValidationExceptionFilter, I18nValidationPipe } from "nestjs-i18n";
+
+import { AppModule } from "~app/app.module";
+import { EnvironmentService } from "~app/environment/environment.service";
+import { RedisService } from "~app/redis/redis.service";
 
 (async () => {
   const application = await NestFactory.create(AppModule);
   const environmentService = application.get(EnvironmentService);
   const redis = application.get(RedisService);
 
-  application.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
+  application.useGlobalPipes(new I18nValidationPipe());
+  application.useGlobalFilters(
+    new I18nValidationExceptionFilter({
+      detailedErrors: false,
     }),
   );
 

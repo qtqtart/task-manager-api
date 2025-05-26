@@ -1,6 +1,7 @@
-import { EnvironmentService } from "@app/environment/environment.service";
 import { Injectable } from "@nestjs/common";
 import Redis from "ioredis";
+
+import { EnvironmentService } from "~app/environment/environment.service";
 
 @Injectable()
 export class RedisService extends Redis {

@@ -1,0 +1,10 @@
+{
+  "create_session": "Error creating session",
+  "delete_session": "Error deleting session",
+
+  "existing_user_by_username": "User already exist by username: ${username}",
+  "existing_user_by_email": "User already exist by email: ${email}",
+
+  "user_not_found": "User not found",
+  "invalid_password": "Password is invalid"
+}

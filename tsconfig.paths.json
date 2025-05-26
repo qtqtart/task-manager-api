@@ -2,12 +2,13 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@app": ["./src/app"],
-      "@app/*": ["./src/app/*"],
-      "@entities": ["./src/entities"],
-      "@entities/*": ["./src/entities/*"],
-      "@shared": ["./src/shared"],
-      "@shared/*": ["./src/shared/*"]
+      "~_i18n": ["./src/_i18n/index.ts"],
+      "~app": ["./src/app"],
+      "~app/*": ["./src/app/*"],
+      "~modules": ["./src/modules"],
+      "~modules/*": ["./src/modules/*"],
+      "~shared": ["./src/shared"],
+      "~shared/*": ["./src/shared/*"]
     }
   }
 }

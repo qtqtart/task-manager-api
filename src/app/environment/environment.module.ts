@@ -7,6 +7,7 @@ import { validate } from "./environment.utils";
 @Module({
   imports: [
     ConfigModule.forRoot({
+      expandVariables: true,
       isGlobal: true,
       cache: true,
       validate,

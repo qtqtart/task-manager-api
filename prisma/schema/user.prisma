@@ -1,18 +1,19 @@
 model User {
-  id             String          @id @default(uuid())
-  createdAt      DateTime        @default(now()) @map("created_at")
-  updatedAt      DateTime        @updatedAt @map("updated_at")
-  username       String          @unique @db.VarChar(255)
-  email          String          @unique @db.VarChar(255)
-  firstName      String?         @map("first_name")
-  lastName       String?         @map("last_name")
-  imageUrl       String?         @map("image_url")
+  id             String    @id @default(uuid())
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  username       String    @unique @db.VarChar(255)
+  email          String    @unique @db.VarChar(255)
+  firstName      String?   @db.VarChar(255) @map("first_name")
+  lastName       String?   @db.VarChar(255) @map("last_name")
+  imageUrl       String?   @map("image_url")
   password       String
-  ProjectMembers ProjectMember[]
-  projects       Project[]
-  taskAssignees  TaskAssignee[]
-  taskFiles      TaskFile[]
-  tasks          Task[]
+  //
+  ownedProjects  Project[] @relation("ProjectOwner")
+  memberProjects Project[] @relation("ProjectMembers")
+  //
+  createdTasks   Task[]    @relation("TaskCreator")
+  assignedTasks  Task[]    @relation("TaskAssignees")
 
   @@map("users")
 }

@@ -1,0 +1,4 @@
+{
+  "min_lenght": "min length is ${count}",
+  "max_langth": "max length is ${count}"
+}

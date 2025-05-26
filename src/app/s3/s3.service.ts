@@ -1,10 +1,11 @@
-import { EnvironmentService } from "@app/environment/environment.service";
 import {
   DeleteObjectCommand,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
 import { Injectable } from "@nestjs/common";
+
+import { EnvironmentService } from "~app/environment/environment.service";
 
 @Injectable()
 export class S3Service {

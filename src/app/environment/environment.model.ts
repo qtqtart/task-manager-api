@@ -1,6 +1,7 @@
-import { ToBoolean } from "@shared/decorators/to-boolean.decorator";
-import { ToNumber } from "@shared/decorators/to-number.decorator";
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from "class-validator";
+
+import { ToBoolean } from "~shared/decorators/to-boolean.decorator";
+import { ToNumber } from "~shared/decorators/to-number.decorator";
 
 import { Environment } from "./environment.types";
 
@@ -92,7 +93,7 @@ export class EnvironmentModel implements Environment {
   REDIS_PASSWORD: string;
   @IsNotEmpty()
   @IsString()
-  REDIST_HOST: string;
+  REDIS_HOST: string;
   @ToNumber()
   @IsNumber()
   REDIS_PORT: number;
