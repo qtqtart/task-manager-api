@@ -33,13 +33,12 @@ export class ProjectController {
 
   @Get()
   public async getAll(
-    @Query("searchTerms") searchTerms: string = "",
-    @Query("isArchived", ParseBoolPipe) isArchived: boolean = false,
     @Req() req: Request,
+    @Query("searchTerms") searchTerms?: string,
+    @Query("isArchived", ParseBoolPipe) isArchived?: boolean,
   ) {
     return await this.projectService.getAll(
-      searchTerms,
-      isArchived,
+      { searchTerms, isArchived },
       req.user.id,
     );
   }

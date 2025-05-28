@@ -16,6 +16,7 @@ export type I18nTranslations = {
         "project_not_found": string;
         "project_is_archived": string;
         "file_not_found": string;
+        "task_not_found": string;
         "user_dont_have_access": string;
         "owner_cannot_be_member": string;
         "invalid_password": string;

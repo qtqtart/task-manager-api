@@ -8,7 +8,6 @@ import { I18nService } from "nestjs-i18n";
 
 import { I18nTranslations } from "~_i18n";
 import { PrismaService } from "~app/prisma/prisma.service";
-import { S3Service } from "~app/s3/s3.service";
 import { USER_SELECT } from "~modules/user/user.consts";
 
 import { CreateProjectDto } from "./dtos/create-project.dto";
@@ -35,8 +34,10 @@ export class ProjectService {
   ) {}
 
   public async getAll(
-    searchTerms: string,
-    isArchived: boolean,
+    filtres: {
+      searchTerms?: string;
+      isArchived?: boolean;
+    },
     userId: string,
   ) {
     return await this.prismaService.project.findMany({
@@ -49,11 +50,11 @@ export class ProjectService {
             },
           },
         ],
-        ...(searchTerms && {
-          title: { contains: searchTerms, mode: "insensitive" },
+        ...(filtres.searchTerms && {
+          title: { contains: filtres.searchTerms, mode: "insensitive" },
         }),
-        ...(isArchived && {
-          isArchived,
+        ...(filtres.isArchived && {
+          isArchived: filtres.isArchived,
         }),
       },
       orderBy: {
