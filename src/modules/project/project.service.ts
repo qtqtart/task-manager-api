@@ -8,6 +8,7 @@ import { I18nService } from "nestjs-i18n";
 
 import { I18nTranslations } from "~_i18n";
 import { PrismaService } from "~app/prisma/prisma.service";
+import { S3Service } from "~app/s3/s3.service";
 import { USER_SELECT } from "~modules/user/user.consts";
 
 import { CreateProjectDto } from "./dtos/create-project.dto";
@@ -29,7 +30,7 @@ const include = {
 @Injectable()
 export class ProjectService {
   constructor(
-    private prismaService: PrismaService,
+    private readonly prismaService: PrismaService,
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
@@ -64,7 +65,7 @@ export class ProjectService {
 
   public async create(dto: CreateProjectDto, userId: string) {
     if (dto.title) {
-      await this.checkUnique(dto.title);
+      await this.checkUnique(dto.title, userId);
     }
     if (dto.memberIds.includes(userId)) {
       throw new ConflictException(this.i18n.t("error.owner_cannot_be_member"));
@@ -94,9 +95,9 @@ export class ProjectService {
     dto: UpdateProjectDto,
     userId: string,
   ) {
-    await this.checkOwnership(projectId, userId);
-    if (dto.title) {
-      await this.checkUnique(dto.title);
+    const project = await this.checkOwnership(projectId, userId);
+    if (project.title !== dto.title) {
+      await this.checkUnique(dto.title, userId);
     }
     if (dto.memberIds?.includes(userId)) {
       throw new ConflictException(this.i18n.t("error.owner_cannot_be_member"));
@@ -137,10 +138,11 @@ export class ProjectService {
     return project;
   }
 
-  private async checkUnique(title: string) {
+  private async checkUnique(title: string, userId: string) {
     const project = await this.prismaService.project.findFirst({
       where: {
         title,
+        ownerId: userId,
       },
     });
 

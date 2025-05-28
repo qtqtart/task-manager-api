@@ -2,7 +2,7 @@ model Project {
   id          String   @id @default(uuid())
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
-  title       String   @unique @db.VarChar(255)
+  title       String   @db.VarChar(255)
   description String?  @db.VarChar(1000)
   imageUrl    String?  @map("image_url")
   //
