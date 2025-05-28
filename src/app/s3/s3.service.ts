@@ -24,7 +24,7 @@ export class S3Service {
     });
     this.url = `${this.environmentService.get("S3_ENDPOINT")}/${this.environmentService.get("S3_BUCKET")}`;
   }
-  public getKey() {}
+
   public async upload(buffer: Buffer, key: string, mimetype: string) {
     await this.client.send(
       new PutObjectCommand({
@@ -37,6 +37,7 @@ export class S3Service {
     );
     return `${this.url}/${key}`;
   }
+
   public async remove(key: string) {
     await this.client.send(
       new DeleteObjectCommand({

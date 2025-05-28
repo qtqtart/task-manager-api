@@ -13,9 +13,9 @@ export class SessionService {
     private readonly i18n: I18nService<I18nTranslations>,
   ) {}
 
-  public createSession(req: Request, user: Omit<User, "password">) {
+  public createSession(req: Request, userId: string) {
     return new Promise((resolve, reject) => {
-      req.session.userId = user.id;
+      req.session.userId = userId;
       req.session.createdAt = new Date();
       req.session.save((error) => {
         if (error) {
@@ -35,9 +35,7 @@ export class SessionService {
       req.session.destroy((err) => {
         if (err) {
           return reject(
-            new InternalServerErrorException(
-              this.i18n.t("error.delete_session"),
-            ),
+            new InternalServerErrorException("неудалось удалить сессию"),
           );
         }
         req.res.clearCookie(this.environmentService.get("SESSION_NAME"));

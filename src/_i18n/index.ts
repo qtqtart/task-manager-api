@@ -10,7 +10,14 @@ export type I18nTranslations = {
         "delete_session": string;
         "existing_user_by_username": string;
         "existing_user_by_email": string;
+        "existing_project_by_title": string;
         "user_not_found": string;
+        "users_not_found": string;
+        "project_not_found": string;
+        "project_is_archived": string;
+        "file_not_found": string;
+        "user_dont_have_access": string;
+        "owner_cannot_be_member": string;
         "invalid_password": string;
     };
     "validation": {

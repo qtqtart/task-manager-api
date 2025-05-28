@@ -7,6 +7,7 @@ import { AuthModule } from "~modules/auth/auth.module";
 import { ProjectModule } from "~modules/project/project.module";
 import { SessionModule } from "~modules/session/session.module";
 import { TaskModule } from "~modules/task/task.module";
+import { UploadModule } from "~modules/upload/upload.module";
 import { UserModule } from "~modules/user/user.module";
 import { COOKIES_KEYS } from "~shared/consts/cookies-keys";
 import { FALLBACK_LANGUAGE } from "~shared/consts/languages";
@@ -45,6 +46,7 @@ import { S3Module } from "./s3/s3.module";
     ProjectModule,
     SessionModule,
     TaskModule,
+    UploadModule,
     UserModule,
   ],
 })

@@ -38,12 +38,12 @@ export class AuthService {
     if (!isValidPassword) {
       throw new UnauthorizedException(this.i18n.t("error.invalid_password"));
     }
-    return this.sessionService.createSession(req, user);
+    return this.sessionService.createSession(req, user.id);
   }
 
   public async singUp(req: Request, dto: SignUpDto) {
     const user = await this.userService.create(dto);
-    return this.sessionService.createSession(req, user);
+    return this.sessionService.createSession(req, user.id);
   }
 
   public async singOut(req: Request) {

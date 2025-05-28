@@ -6,6 +6,7 @@ import { I18nTranslations } from "~_i18n";
 import { PrismaService } from "~app/prisma/prisma.service";
 
 import { CreateUserDto } from "./dtos/create-user.dto";
+import { USER_SELECT } from "./user.consts";
 
 @Injectable()
 export class UserService {
@@ -18,6 +19,22 @@ export class UserService {
     return await this.prismaService.user.findUnique({
       where: {
         id: userId,
+      },
+      select: {
+        ...USER_SELECT,
+      },
+    });
+  }
+
+  public async getAll(userId: string) {
+    return await this.prismaService.user.findMany({
+      where: {
+        id: {
+          not: userId,
+        },
+      },
+      select: {
+        ...USER_SELECT,
       },
     });
   }
@@ -33,6 +50,9 @@ export class UserService {
         lastName: dto.lastName,
         imageUrl: dto.imageUrl,
         password,
+      },
+      select: {
+        ...USER_SELECT,
       },
     });
   }

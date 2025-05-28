@@ -2,9 +2,19 @@
   "create_session": "Error creating session",
   "delete_session": "Error deleting session",
 
-  "existing_user_by_username": "User already exist by username: ${username}",
-  "existing_user_by_email": "User already exist by email: ${email}",
+  "existing_user_by_username": "User already exist by username: {username}",
+  "existing_user_by_email": "User already exist by email: {email}",
+
+  "existing_project_by_title": "Project already exist by title: {title}",
 
   "user_not_found": "User not found",
+  "users_not_found": "Users not found",
+  "project_not_found": "Project not found",
+  "project_is_archived": "Project is archived",
+  "file_not_found": "File not found",
+
+  "user_dont_have_access": "You don't have access",
+  "owner_cannot_be_member": "Owner cannot be member",
+
   "invalid_password": "Password is invalid"
 }

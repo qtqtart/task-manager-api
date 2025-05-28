@@ -37,6 +37,5 @@ export class CreateUserDto implements Partial<User> {
   password: string;
   @IsString()
   @IsOptional()
-  @IsUrl()
   imageUrl?: string;
 }
